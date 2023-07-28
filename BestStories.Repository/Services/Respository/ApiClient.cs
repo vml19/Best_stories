@@ -3,7 +3,7 @@ using BestStories.Model;
 
 namespace BestStories.Channel.Services.Respository
 {
-    internal class ApiClient : IApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _httpClient;
 
@@ -11,24 +11,27 @@ namespace BestStories.Channel.Services.Respository
         {
             _httpClient = httpClient;
         }
-        public async Task<IEnumerable<int>> GetBestStoriesAsync(string path)
+        public async IAsyncEnumerable<int> GetBestStoriesAsync(string path)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(path);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsAsync<IEnumerable<int>>();
+                var result = await response.Content.ReadAsAsync<IEnumerable<int>>();
+
+                foreach (var item in result)
+                {
+                    yield return item;
+                }
             }
-            return null;
         }
 
-        public async Task<Story> GetStoryAsync(string path)
+        public async IAsyncEnumerable<Story> GetStoryAsync(string path)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(path);
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsAsync<Story>();
+                yield return await response.Content.ReadAsAsync<Story>();
             }
-            return null;
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using BestStories.Channel.Services.Contracts;
 using BestStories.Data.Services.Contracts;
 using BestStories.Model;
-using System.Collections.Generic;
 
 namespace BestStories.Data.Services.Repository
 {
@@ -15,19 +14,20 @@ namespace BestStories.Data.Services.Repository
         }
         public async IAsyncEnumerable<BestStory> GetBestStories()
         {
-            foreach (var bestStoryId in await _externalDataManager.GetBestStories())
+            await foreach (var bestStoryId in _externalDataManager.GetBestStories())
             {
-                var bestStory = await _externalDataManager.GetStory(bestStoryId);
-
-                yield return new BestStory
+                await foreach (var bestStory in _externalDataManager.GetStory(bestStoryId))
                 {
-                    CommentCount = bestStory.descendants,
-                    PostedBy = bestStory.by,
-                    Score = bestStory.score,
-                    Time = bestStory.time,
-                    Title = bestStory.title,
-                    Uri = bestStory.url
-                };
+                    yield return new BestStory
+                    {
+                        CommentCount = bestStory.descendants,
+                        PostedBy = bestStory.by,
+                        Score = bestStory.score,
+                        Time = bestStory.time,
+                        Title = bestStory.title,
+                        Uri = bestStory.url
+                    };
+                }
             }
         }
     }

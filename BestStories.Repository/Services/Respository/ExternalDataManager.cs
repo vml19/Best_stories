@@ -11,14 +11,20 @@ namespace BestStories.Repository.Services.Respository
         {
             _apiClient = apiClient;
         }
-        public async Task<IEnumerable<int>> GetBestStories()
+        public async IAsyncEnumerable<int> GetBestStories()
         {
-            return await _apiClient.GetBestStoriesAsync("https://hacker-news.firebaseio.com/v0/beststories.json");
+            await foreach (var bestStoryId in _apiClient.GetBestStoriesAsync("https://hacker-news.firebaseio.com/v0/beststories.json"))
+            {
+                yield return bestStoryId;
+            }
         }
 
-        public async Task<Story> GetStory(int id)
+        public async IAsyncEnumerable<Story> GetStory(int id)
         {
-            return await _apiClient.GetStoryAsync("https://hacker-news.firebaseio.com/v0/item/"+ id + ".json");
+            await foreach (var story in _apiClient.GetStoryAsync("https://hacker-news.firebaseio.com/v0/item/" + id + ".json"))
+            {
+                yield return story;
+            }
         }
     }
 }

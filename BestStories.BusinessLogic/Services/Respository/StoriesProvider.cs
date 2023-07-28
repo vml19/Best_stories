@@ -1,25 +1,26 @@
 ﻿using BestStories.BusinessLogic.Services.Contracts;
-using BestStories.Data.Services.Repository;
+using BestStories.Data.Services.Contracts;
 using BestStories.Model;
 
 namespace BestStories.BusinessLogic.Services.Respository
 {
     public class StoriesProvider : IStoriesProvider
     {
-        private readonly StoryDataManager _storyDataManager;
+        private readonly IStoryDataManager _storyDataManager;
 
-        public StoriesProvider(StoryDataManager storyDataManager)
+        public StoriesProvider(IStoryDataManager storyDataManager)
         {
             _storyDataManager = storyDataManager;
         }
         public async IAsyncEnumerable<BestStory> GetFirstNBestStories(int n)
         {
-            var allBestStories = await _storyDataManager
+            foreach (var story in await _storyDataManager
                 .GetBestStories()
-                .OrderByDescending(o=>o.Score)
+                .OrderByDescending(o => o.Score)
                 .Take(n)
-                .ToListAsync();    
-            yield return allBestStories.First();
+                .ToListAsync())
+
+                yield return story;
         }
     }
 }

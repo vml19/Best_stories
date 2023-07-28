@@ -4,7 +4,7 @@ namespace BestStories.Channel.Services.Contracts
 {
     public interface IApiClient
     {
-        Task<IEnumerable<int>> GetBestStoriesAsync(string path);
-        Task<Story> GetStoryAsync(string path);
+        IAsyncEnumerable<int> GetBestStoriesAsync(string path);
+        IAsyncEnumerable<Story> GetStoryAsync(string path);
     }
 }
