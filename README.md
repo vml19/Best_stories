@@ -15,7 +15,7 @@ RESTful API to retrieve the details of the best n stories from the Hacker News A
 Slowness in fetching the best stories is well understood as every new request (with different parameter) requires retrieval of all best stories from Hacker News API and getting story details for each story are bit of time-consuming tasks.
 
 ## Future enhancements
-1. Improve Api response time by having a separate back-end service for locally storing and frequently updating Best Stories from Hacker News API, this way is more efficient as BestStories.API just to need serve users by retrieving Best Stories from local persistent store itself, does not need to hit the Api everytime and keep the user to wait.
+1. Improve Api response time by having a separate back-end service for locally storing and frequently updating Best Stories from Hacker News API, this way is more efficient as BestStories.API just to need serve users by retrieving Best Stories from local persistent store itself, does not need to hit the Api everytime and keep the user to wait. Also with proper in memory caching is imeplemented, risk of overloading Hacker News API with large number of requests will be eliminated.
 2. Improved caching mechanism for faster API response time.
 3. Proper exception handing.
 4. Separate module for Rest calls.
