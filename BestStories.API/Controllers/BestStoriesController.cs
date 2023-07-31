@@ -1,5 +1,6 @@
 ﻿using BestStories.BusinessLogic.Services.Contracts;
 using BestStories.Model;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BestStories.Controllers
@@ -16,11 +17,17 @@ namespace BestStories.Controllers
         }
 
         [HttpGet("{n}", Name = "GetBestStories")]
-        public async IAsyncEnumerable<BestStory> Get(int n)
+        [ResponseCache(CacheProfileName = "Default30")]
+        public Results<NotFound, Ok<IAsyncEnumerable<BestStory>>, BadRequest> Get(int n)
         {
-            await foreach (var bestStory in _storiesProvider.GetFirstNBestStories(n))
+            try
             {
-                yield return bestStory;
+                var bestStories = _storiesProvider.GetBestNStories(n);
+                return bestStories == null ? TypedResults.NotFound() : TypedResults.Ok(bestStories);
+            }
+            catch (Exception)
+            {
+                return TypedResults.BadRequest();
             }
         }
     }

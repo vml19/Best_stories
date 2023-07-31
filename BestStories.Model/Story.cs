@@ -1,15 +1,35 @@
-﻿namespace BestStories.Model
+﻿using System.Runtime.Serialization;
+
+namespace BestStories.Model
 {
+    [DataContract]
     public class Story
     {
-        public string by { get; set; }
-        public int descendants { get; set; }
-        public int id { get; set; }
-        public object[] kids { get; set; }
-        public int score { get; set; }
-        public int time { get; set; }
-        public string title { get; set; }
-        public string type { get; set; }
-        public string url { get; set; }
+        [DataMember(Name = "by")]
+        public string PostedBy { get; set; }
+
+        [DataMember(Name = "descendants")]
+        public int CommentCount { get; set; }
+
+        [DataMember(Name = "id")]
+        public int Id { get; set; }
+
+        [DataMember(Name = "kids")]
+        public object[] Kids { get; set; }
+
+        [DataMember(Name = "score")]
+        public int Score { get; set; }
+
+        [DataMember(Name = "time")]
+        public double Time { get; set; }
+
+        [DataMember(Name = "title")]
+        public string Title { get; set; }
+
+        [DataMember(Name = "type")]
+        public string Type { get; set; }
+
+        [DataMember(Name = "url")]
+        public string Uri { get; set; }
     }
 }

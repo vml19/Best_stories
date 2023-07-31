@@ -2,9 +2,9 @@
 
 namespace BestStories.Channel.Services.Contracts
 {
-    public interface IExternalDataManager
+    public interface IRestClient
     {
         IAsyncEnumerable<int> GetBestStories();
-        IAsyncEnumerable<Story> GetStory(int id);
+        Task<Story> GetStory(int id);
     }
 }

@@ -6,9 +6,9 @@ namespace BestStories.Data.Services.Repository
 {
     public class StoryDataManager : IStoryDataManager
     {
-        private readonly IExternalDataManager _externalDataManager;
+        private readonly IRestClient _externalDataManager;
 
-        public StoryDataManager(IExternalDataManager externalDataManager)
+        public StoryDataManager(IRestClient externalDataManager)
         {
             _externalDataManager = externalDataManager;
         }
@@ -16,18 +16,17 @@ namespace BestStories.Data.Services.Repository
         {
             await foreach (var bestStoryId in _externalDataManager.GetBestStories())
             {
-                await foreach (var bestStory in _externalDataManager.GetStory(bestStoryId))
+                var bestStory = await _externalDataManager.GetStory(bestStoryId);
+
+                yield return new BestStory
                 {
-                    yield return new BestStory
-                    {
-                        CommentCount = bestStory.descendants,
-                        PostedBy = bestStory.by,
-                        Score = bestStory.score,
-                        Time = bestStory.time,
-                        Title = bestStory.title,
-                        Uri = bestStory.url
-                    };
-                }
+                    CommentCount = bestStory.CommentCount,
+                    PostedBy = bestStory.PostedBy,
+                    Score = bestStory.Score,
+                    Time = DateTime.UnixEpoch.AddSeconds(bestStory.Time).ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"),
+                    Title = bestStory.Title,
+                    Uri = bestStory.Uri
+                };
             }
         }
     }

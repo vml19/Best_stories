@@ -12,14 +12,15 @@ namespace BestStories.BusinessLogic.Services.Respository
         {
             _storyDataManager = storyDataManager;
         }
-        public async IAsyncEnumerable<BestStory> GetFirstNBestStories(int n)
+        public async IAsyncEnumerable<BestStory> GetBestNStories(int n)
         {
-            foreach (var story in await _storyDataManager
+            var bestStories = _storyDataManager
                 .GetBestStories()
-                .OrderByDescending(o => o.Score)
+                .OrderByDescending(e => e.Score)
                 .Take(n)
-                .ToListAsync())
+                .AsAsyncEnumerable();
 
+            await foreach (var story in bestStories)            
                 yield return story;
         }
     }
