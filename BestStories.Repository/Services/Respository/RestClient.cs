@@ -14,7 +14,7 @@ namespace BestStories.Repository.Services.Respository
             _httpClient = httpClient;
         }
 
-        public async IAsyncEnumerable<int> GetBestStories()
+        public async IAsyncEnumerable<int> GetBestStoryIds()
         {
             using HttpResponseMessage response = await _httpClient.GetAsync($"{BaseUrl}/beststories.json");
             if (response.IsSuccessStatusCode)

@@ -1,33 +1,33 @@
-using BestStories.BusinessLogic.Services.Contracts;
-using BestStories.Controllers;
+using BestStories.BusinessLogic.Services.Respository;
+using BestStories.Data.Services.Contracts;
 using BestStories.Model;
 using Moq;
 
-namespace BestStories.RestApi.Test
+namespace BestStories.BusinessLogic.Test
 {
-    public class BestStoriesControllerTests
+    public class StoriesProviderTests
     {
-        Mock<IStoriesProvider> storiesProviderMock;
-        BestStoriesController bestStoriesController;
+        Mock<IStoryDataManager> storyDataManagerMock;
+        StoriesProvider storiesProvider;
 
         [SetUp]
         public void Setup()
         {
-            storiesProviderMock = new Mock<IStoriesProvider>();
-            bestStoriesController = new BestStoriesController(storiesProviderMock.Object);
+            storyDataManagerMock = new Mock<IStoryDataManager>();
+            storiesProvider = new StoriesProvider(storyDataManagerMock.Object);
         }
 
         [Test]
-        public async Task GetBestStoriesShouldReturnListofStories()
+        public async Task GetBestNStoriesShouldReturnListOfNStories()
         {
             //Test data
-            static async IAsyncEnumerable<BestStory> BestStoriesData()
+            static async IAsyncEnumerable<BestStory> StoriesData()
             {
                 yield return new BestStory
                 {
                     CommentCount = 123,
                     PostedBy = "Test user1",
-                    Score = 655,
+                    Score = 55,
                     Time = DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"),
                     Title = "Test best story title1",
                     Uri = "Test Uri1"
@@ -53,17 +53,24 @@ namespace BestStories.RestApi.Test
                 await Task.CompletedTask;
             }
 
-            int noOfBestStoriesRequested = 3;
+            int noOfBestStoriesRequested = 2;
 
-            storiesProviderMock.Setup(t => t.GetBestNStories(noOfBestStoriesRequested)).Returns(BestStoriesData);
+            storyDataManagerMock.Setup(t => t.GetBestStories()).Returns(StoriesData);
 
-            var actualBestStoriesReturned = new List<BestStory>();
-            await foreach (var story in bestStoriesController.Get(noOfBestStoriesRequested))
+            var bestStoriesActual = new List<BestStory>();
+            await foreach (var story in storiesProvider.GetBestNStories(noOfBestStoriesRequested))
             {
-                actualBestStoriesReturned.Add(story);
+                bestStoriesActual.Add(story);
             }
 
-            Assert.That(noOfBestStoriesRequested, Is.EqualTo(actualBestStoriesReturned.Count));
+            Assert.Multiple(() =>
+            {
+                Assert.That(noOfBestStoriesRequested, Is.EqualTo(bestStoriesActual.Count));
+
+                Assert.That(actual: StoriesData()
+                    .OrderByDescending(e => e.Score).Take(noOfBestStoriesRequested).FirstAsync().Result.Score,
+                    Is.EqualTo(bestStoriesActual.First().Score));
+            });
         }
     }
 }

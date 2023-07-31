@@ -14,7 +14,7 @@ namespace BestStories.Data.Services.Repository
         }
         public async IAsyncEnumerable<BestStory> GetBestStories()
         {
-            await foreach (var bestStoryId in _externalDataManager.GetBestStories())
+            await foreach (var bestStoryId in _externalDataManager.GetBestStoryIds())
             {
                 var bestStory = await _externalDataManager.GetStory(bestStoryId);
 
