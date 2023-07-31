@@ -4,7 +4,7 @@ namespace BestStories.Channel.Services.Contracts
 {
     public interface IRestClient
     {
-        IAsyncEnumerable<int> GetBestStories();
+        IAsyncEnumerable<int> GetBestStoryIds();
         Task<Story> GetStory(int id);
     }
 }
